@@ -5,7 +5,7 @@
 // import data using d3.csv()
 const dataFile = await d3.csv('/data/routes.csv');
 
-// const colornone = "#ccc";
+const colornone = "#ccc";
 
 
 // define colors for airlines, you can expand this as needed, WN is Southwest, B6 is JetBlue
