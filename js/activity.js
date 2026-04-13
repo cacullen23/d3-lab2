@@ -1,13 +1,13 @@
 // Find TODO statements and complete them to build the interactive airline route map.
 
-// add your uniqname to HTML somewhere with id="uniqname"
+// TODO: add your uniqname to the HTML (use id #uniqname) file so that your work can be identified 
 
 // import data using d3.csv()
 const dataFile = await d3.csv('/data/routes.csv');
 
 const colornone = "#ccc";
 
-// define colors for airlines, you can expand this as needed
+// define colors for airlines, you can expand this as needed, WN is Southwest, B6 is JetBlue
 const airlineColor = { WN: "orange", B6: "steelblue" };
 const airlineName = { WN: "Southwest Airlines", B6: "JetBlue" };
 
@@ -25,7 +25,7 @@ select.selectAll("option")
     .attr("value", d => d)
     .text(d => d === "all" ? "All Airlines" : (airlineName[d] || d));
 
-// helper function to build outgoing and incoming links
+// helper function to build outgoing links for each leaf node
 function bilink(root) {
     const map = new Map(root.leaves().map(d => [id(d), d]));
 
@@ -45,19 +45,23 @@ function bilink(root) {
     return root;
 }
 
-// helper function to generate a unique ID for each node
+// helper function to generate a unique ID for each node based on its position in the hierarchy
 function id(node) {
     return `${node.parent ? id(node.parent) + "/" : ""}${node.data.name}`;
 }
 
-// rebuild hierarchy data and redraw chart on selection change
+//rebuild hierarchy data and redraw chart on selection change
 function draw(airlineFilter) {
+
+    // filter data based on selection, if "all" is selected, use the entire dataset
     const filtered = airlineFilter === "all"
         ? dataFile
         : dataFile.filter(d => d.Airline === airlineFilter);
 
+    // group data by source region and then by source airport
     const grouped = d3.group(filtered, d => d["Source region"], d => d["Source airport"]);
 
+    // transform grouped data into a hierarchy format suitable for the chart
     const hierarchyData = {
         name: "root",
         children: Array.from(grouped, ([region, airports]) => ({
@@ -78,7 +82,7 @@ function draw(airlineFilter) {
     document.getElementById("chart").appendChild(createChart(hierarchyData));
 }
 
-draw("all");
+draw("all"); // initial draw
 
 // create chart
 function createChart(data) {
